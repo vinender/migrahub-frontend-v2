@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from 'sonner';
 import { QueryProvider } from '@/providers/query-provider';
 import { AuthProvider } from '@/contexts/auth-context';
 import { SocketProvider } from '@/contexts/socket-context';
@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -36,22 +36,12 @@ export default function RootLayout({
             <SocketProvider>
               <Toaster
                 position="top-right"
+                expand={false}
+                richColors
+                closeButton
                 toastOptions={{
                   duration: 4000,
-                  style: {
-                    background: '#363636',
-                    color: '#fff',
-                  },
-                  success: {
-                    style: {
-                      background: '#10b981',
-                    },
-                  },
-                  error: {
-                    style: {
-                      background: '#ef4444',
-                    },
-                  },
+                  className: 'sonner-toast',
                 }}
               />
               {children}

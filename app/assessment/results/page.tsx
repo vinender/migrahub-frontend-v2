@@ -14,7 +14,7 @@ import {
   Share2
 } from "lucide-react";
 import { api } from "@/lib/axios";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Link from "next/link";
 
 interface AssessmentResult {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Globe, MapPin } from "lucide-react";
+import { ArrowRight, Globe, MapPin, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -21,6 +21,36 @@ const destinations = [
   { code: "CA", name: "Canada", flag: "🇨🇦" },
   { code: "US", name: "USA", flag: "🇺🇸" },
   { code: "AU", name: "Australia", flag: "🇦🇺" },
+  { code: "UK", name: "United Kingdom", flag: "🇬🇧" },
+  { code: "DE", name: "Germany", flag: "🇩🇪" },
+];
+
+const backgroundImages = [
+  {
+    url: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?q=80&w=2940",
+    country: "Canada",
+    caption: "Canadian Rocky Mountains"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=2940",
+    country: "USA",
+    caption: "New York City Skyline"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?q=80&w=2940",
+    country: "Australia",
+    caption: "Sydney Opera House"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2940",
+    country: "United Kingdom",
+    caption: "London Cityscape"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?q=80&w=2940",
+    country: "Germany",
+    caption: "Neuschwanstein Castle"
+  }
 ];
 
 export default function HeroSection() {
@@ -28,205 +58,198 @@ export default function HeroSection() {
   const [toCountry, setToCountry] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Scenic images from destination countries
-  const backgroundImages = [
-    {
-      url: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?q=80&w=2940",
-      country: "Canada",
-      caption: "Canadian Rocky Mountains"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=2940",
-      country: "USA",
-      caption: "New York City Skyline"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?q=80&w=2940",
-      country: "Australia",
-      caption: "Sydney Opera House"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1549144511-f099e773c147?q=80&w=2940",
-      country: "Canada",
-      caption: "Toronto Skyline"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1602940659805-770d1b3b9911?q=80&w=2940",
-      country: "USA",
-      caption: "Golden Gate Bridge"
-    }
-  ];
-
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % backgroundImages.length);
-    }, 5000);
+    }, 6000);
     return () => clearInterval(interval);
   }, [backgroundImages.length]);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Background Images Carousel */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         <motion.div
           key={currentImageIndex}
           initial={{ opacity: 0, scale: 1.1 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 1.5 }}
+          transition={{ duration: 2, ease: "easeInOut" }}
           className="absolute inset-0"
         >
           <Image
             src={backgroundImages[currentImageIndex].url}
             alt={backgroundImages[currentImageIndex].caption}
             fill
+            sizes="100vw"
             className="object-cover"
             priority
-            quality={90}
           />
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-          
-          {/* Location label */}
-          <div className="absolute bottom-10 left-10 text-white/80">
-            <p className="text-sm font-medium">{backgroundImages[currentImageIndex].country}</p>
-            <p className="text-xs">{backgroundImages[currentImageIndex].caption}</p>
+          {/* Sophisticated Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-950/90 via-primary-950/60 to-primary-950/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary-950/90 via-transparent to-transparent" />
+
+          {/* Location label - Minimal */}
+          <div className="absolute bottom-8 right-8 flex items-center gap-2 text-white/60 bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+            <MapPin className="h-3 w-3" />
+            <p className="text-xs font-medium tracking-wide uppercase">{backgroundImages[currentImageIndex].country} • {backgroundImages[currentImageIndex].caption}</p>
           </div>
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative z-10 container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-12 gap-12 items-center">
           {/* Left content */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="relative z-10"
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="lg:col-span-7 text-white"
           >
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full mb-6"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full mb-8"
             >
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              <span className="text-sm text-white">Trusted by 50,000+ immigrants</span>
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-success-500"></span>
+              </span>
+              <span className="text-sm font-medium tracking-wide text-white/90">Family Visa Applications Made Simple</span>
             </motion.div>
 
-            <h1 className="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Your Journey to a<br />
-              <span className="text-gray-300">Better Tomorrow</span>
+            <h1 className="text-heading-1 mb-6 leading-tight tracking-tight">
+              Apply for Your Visa <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-300 to-info-300">
+                With Your Family
+              </span>
             </h1>
 
-            <p className="text-lg text-gray-200 mb-8 leading-relaxed">
-              Simplifying immigration with AI-powered assessments, 
-              expert guidance, and real-time application tracking.
+            <p className="text-body-xl text-primary-100 mb-10 leading-relaxed max-w-2xl font-light">
+              File visa applications for yourself and your family members in one place.
+              AI-powered eligibility assessments, streamlined document management, and real-time application tracking.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 mb-16">
               <Link href="/register">
-                <button className="px-8 py-4 bg-white text-black rounded-lg font-medium hover:bg-gray-100 transition-all transform hover:scale-105 flex items-center gap-2 shadow-lg">
+                <button className="btn-primary bg-white text-primary-950 hover:bg-primary-50 border-none px-8 py-4 text-lg shadow-glow">
                   Start Your Journey
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-5 w-5 ml-2 inline-block" />
                 </button>
               </Link>
               <Link href="#process">
-                <button className="px-8 py-4 bg-transparent text-white border border-white/50 rounded-lg font-medium hover:bg-white/10 backdrop-blur-sm transition-colors">
-                  Learn How It Works
+                <button className="px-8 py-4 bg-white/5 text-white border border-white/20 rounded-button font-semibold hover:bg-white/10 backdrop-blur-sm transition-all text-lg">
+                  How It Works
                 </button>
               </Link>
             </div>
 
-            {/* Stats */}
-            <div className="flex gap-12">
+            {/* Stats - Minimal */}
+            <div className="grid grid-cols-3 gap-8 border-t border-white/10 pt-8 max-w-lg">
               <div>
-                <h3 className="text-2xl font-bold text-white">98%</h3>
-                <p className="text-gray-300 text-sm">Success Rate</p>
+                <h3 className="text-3xl font-bold text-white mb-1">98%</h3>
+                <p className="text-primary-300 text-sm uppercase tracking-wider font-medium">Success Rate</p>
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-white">48hrs</h3>
-                <p className="text-gray-300 text-sm">Processing</p>
+                <h3 className="text-3xl font-bold text-white mb-1">48h</h3>
+                <p className="text-primary-300 text-sm uppercase tracking-wider font-medium">Processing</p>
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-white">24/7</h3>
-                <p className="text-gray-300 text-sm">Support</p>
+                <h3 className="text-3xl font-bold text-white mb-1">24/7</h3>
+                <p className="text-primary-300 text-sm uppercase tracking-wider font-medium">Support</p>
               </div>
             </div>
           </motion.div>
 
-          {/* Right content - Country selector */}
+          {/* Right content - Floating Glass Card */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="relative z-10"
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="lg:col-span-5 relative"
           >
-            <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                Check Your Eligibility
+            {/* Decorative Elements */}
+            <div className="absolute -top-10 -right-10 w-64 h-64 bg-accent-500/30 rounded-full blur-3xl -z-10 animate-pulse" />
+            <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-info-500/30 rounded-full blur-3xl -z-10 animate-pulse delay-700" />
+
+            <div className="glass p-8 rounded-3xl shadow-2xl border-white/20 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-500 to-info-500" />
+
+              <h2 className="text-2xl font-bold text-primary-900 mb-2">
+                Start Your Application
               </h2>
+              <p className="text-primary-500 text-sm mb-8">
+                Check your eligibility and apply with your family.
+              </p>
 
               <div className="space-y-6">
-                <div>
-                  <label className="flex items-center gap-2 text-gray-600 text-sm mb-3">
-                    <MapPin className="h-4 w-4" />
-                    Current Country
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-primary-600 uppercase tracking-wider">
+                    I am from
                   </label>
-                  <select
-                    value={fromCountry}
-                    onChange={(e) => setFromCountry(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
-                  >
-                    <option value="">Select your country</option>
-                    {countries.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {country.flag} {country.name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={fromCountry}
+                      onChange={(e) => setFromCountry(e.target.value)}
+                      className="w-full pl-4 pr-10 py-4 rounded-xl bg-primary-50/50 border border-primary-200 text-primary-900 focus:outline-none focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all appearance-none cursor-pointer font-medium"
+                    >
+                      <option value="">Select Origin Country</option>
+                      {countries.map((country) => (
+                        <option key={country.code} value={country.code}>
+                          {country.flag} {country.name}
+                        </option>
+                      ))}
+                    </select>
+                    <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary-400 pointer-events-none" />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="flex items-center gap-2 text-gray-600 text-sm mb-3">
-                    <Globe className="h-4 w-4" />
-                    Destination Country
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-primary-600 uppercase tracking-wider">
+                    I want to go to
                   </label>
-                  <select
-                    value={toCountry}
-                    onChange={(e) => setToCountry(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
-                  >
-                    <option value="">Select destination</option>
-                    {destinations.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {country.flag} {country.name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={toCountry}
+                      onChange={(e) => setToCountry(e.target.value)}
+                      className="w-full pl-4 pr-10 py-4 rounded-xl bg-primary-50/50 border border-primary-200 text-primary-900 focus:outline-none focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all appearance-none cursor-pointer font-medium"
+                    >
+                      <option value="">Select Destination</option>
+                      {destinations.map((country) => (
+                        <option key={country.code} value={country.code}>
+                          {country.flag} {country.name}
+                        </option>
+                      ))}
+                    </select>
+                    <Globe className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary-400 pointer-events-none" />
+                  </div>
                 </div>
 
-                <Link href={`/assessment?from=${fromCountry}&to=${toCountry}`}>
+                <Link href={`/assessment?from=${fromCountry}&to=${toCountry}`} className="block pt-2">
                   <button
                     disabled={!fromCountry || !toCountry}
-                    className="w-full py-4 bg-black text-white rounded-lg font-medium hover:bg-gray-900 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+                    className="w-full py-4 bg-primary-900 text-white rounded-xl font-bold text-lg hover:bg-primary-800 disabled:bg-primary-200 disabled:text-primary-400 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
-                    Check Eligibility Now
+                    Check Eligibility
                   </button>
                 </Link>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-100">
-                <p className="text-gray-500 text-xs text-center">
-                  Free assessment • No credit card required • 2 minutes
-                </p>
+              <div className="mt-6 flex items-center justify-center gap-4 text-xs text-primary-500 font-medium">
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3 text-success-500" /> Free
+                </span>
+                <span className="w-1 h-1 rounded-full bg-primary-300" />
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3 text-success-500" /> Instant
+                </span>
+                <span className="w-1 h-1 rounded-full bg-primary-300" />
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3 text-success-500" /> Secure
+                </span>
               </div>
             </div>
-
-            {/* Simple accent */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-gray-100 rounded-2xl -z-10"></div>
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gray-50 rounded-2xl -z-10"></div>
           </motion.div>
         </div>
       </div>

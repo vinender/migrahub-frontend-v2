@@ -1,12 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { 
-  UserPlus, 
-  FileSearch, 
-  Upload, 
-  CreditCard, 
-  Send, 
+import {
+  UserPlus,
+  FileSearch,
+  Upload,
+  CreditCard,
+  Send,
   Clock,
   CheckCircle,
   Plane
@@ -73,19 +73,19 @@ const steps = [
 
 export default function ProcessTimeline() {
   return (
-    <section className="py-20 bg-gray-50" id="process">
-      <div className="container mx-auto px-4">
+    <section className="py-24 bg-white" id="process">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-20"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold mb-4 text-gray-900">
+          <h2 className="text-heading-2 text-primary-900 mb-4">
             Your Immigration Journey
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-body-lg text-primary-600 max-w-3xl mx-auto">
             From application to approval - we make every step simple, transparent, and stress-free
           </p>
         </motion.div>
@@ -93,7 +93,7 @@ export default function ProcessTimeline() {
         {/* Timeline */}
         <div className="relative">
           {/* Connecting Line */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gray-200 hidden lg:block" />
+          <div className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-primary-200 hidden lg:block" />
 
           <div className="space-y-12">
             {steps.map((step, index) => (
@@ -103,30 +103,29 @@ export default function ProcessTimeline() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`flex items-center gap-8 ${
-                  index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
-                }`}
+                className={`flex items-center gap-8 ${index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
+                  }`}
               >
                 {/* Content */}
                 <div className={`flex-1 ${index % 2 === 0 ? "lg:text-right" : "lg:text-left"}`}>
                   <motion.div
                     whileHover={{ scale: 1.02 }}
-                    className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+                    className="bg-white rounded-card p-8 border border-primary-100 hover:shadow-card-hover transition-all duration-300 group"
                   >
-                    <div className={`flex items-center gap-4 mb-3 ${
-                      index % 2 === 0 ? "lg:justify-end" : "lg:justify-start"
-                    }`}>
-                      <span className="text-sm font-semibold px-3 py-1 rounded-full bg-black text-white">
+                    <div className={`flex items-center gap-4 mb-4 ${index % 2 === 0 ? "lg:justify-end" : "lg:justify-start"
+                      }`}>
+                      <span className="text-xs font-bold px-3 py-1 rounded-full bg-primary-900 text-white uppercase tracking-wider">
                         Step {step.step}
                       </span>
-                      <span className="text-xs text-gray-500 font-medium">
+                      <span className="text-xs text-primary-500 font-medium flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
                         {step.duration}
                       </span>
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    <h3 className="text-heading-6 text-primary-900 mb-2 group-hover:text-accent-600 transition-colors">
                       {step.title}
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-body-sm text-primary-500">
                       {step.description}
                     </p>
                   </motion.div>
@@ -134,14 +133,14 @@ export default function ProcessTimeline() {
 
                 {/* Icon Circle */}
                 <motion.div
-                  whileHover={{ scale: 1.2, rotate: 360 }}
-                  transition={{ duration: 0.3 }}
-                  className="relative z-10 w-16 h-16 rounded-full bg-black flex items-center justify-center shadow-lg"
+                  whileHover={{ scale: 1.1, rotate: 360 }}
+                  transition={{ duration: 0.5 }}
+                  className="relative z-10 w-16 h-16 rounded-full bg-primary-900 flex items-center justify-center shadow-lg border-4 border-white"
                 >
-                  <step.icon className="h-8 w-8 text-white" />
-                  
+                  <step.icon className="h-7 w-7 text-white" />
+
                   {/* Pulse effect */}
-                  <div className="absolute inset-0 rounded-full bg-gray-400 opacity-20 animate-ping" />
+                  <div className="absolute inset-0 rounded-full bg-accent-500 opacity-20 animate-ping" />
                 </motion.div>
 
                 {/* Spacer for mobile */}
@@ -150,34 +149,6 @@ export default function ProcessTimeline() {
             ))}
           </div>
         </div>
-
-        {/* Stats Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-20 bg-gray-900 rounded-3xl p-8 text-white"
-        >
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            <div>
-              <h3 className="text-4xl font-bold mb-2">50,000+</h3>
-              <p className="text-white/80">Successful Applications</p>
-            </div>
-            <div>
-              <h3 className="text-4xl font-bold mb-2">98%</h3>
-              <p className="text-white/80">Success Rate</p>
-            </div>
-            <div>
-              <h3 className="text-4xl font-bold mb-2">48hrs</h3>
-              <p className="text-white/80">Submission Time</p>
-            </div>
-            <div>
-              <h3 className="text-4xl font-bold mb-2">24/7</h3>
-              <p className="text-white/80">Support Available</p>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/axios';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface User {
   _id: string;
@@ -20,7 +20,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, redirectUrl?: string) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (user: User) => void;
@@ -71,29 +71,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, redirectUrl?: string) => {
     try {
       const response = await api.post('/auth/login', { email, password });
-      
+
       if (response.success) {
         const { user, accessToken, refreshToken } = response.data;
-        
+
         // Store tokens
         localStorage.setItem('access_token', accessToken);
         localStorage.setItem('refresh_token', refreshToken);
         localStorage.setItem('user', JSON.stringify(user));
-        
+
         setUser(user);
         toast.success('Login successful!');
-        
-        // Redirect based on role
-        if (user.role === 'admin') {
-          router.push('/admin/dashboard');
-        } else if (user.role === 'case_manager') {
-          router.push('/case-manager/dashboard');
-        } else {
-          router.push('/dashboard');
+
+        // Check for redirect URL (from query params or localStorage)
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect = redirectUrl || urlParams.get('redirect');
+
+        if (redirect) {
+          router.push(redirect);
+          return;
         }
+
+        // Redirect to home page (dashboard will be shown there)
+        router.push('/');
       }
     } catch (error: any) {
       const message = error.response?.data?.message || 'Login failed';
@@ -116,9 +119,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         setUser(user);
         toast.success('Registration successful!');
-        
-        // Redirect to dashboard
-        router.push('/dashboard');
+
+        // Redirect to home page (dashboard will be shown there)
+        router.push('/');
       }
     } catch (error: any) {
       const message = error.response?.data?.message || 'Registration failed';

@@ -2,11 +2,13 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Building2, GraduationCap, Heart, Home, Briefcase, Shield, Clock, TrendingUp, CheckCircle } from "lucide-react";
+import Link from "next/link";
+import { Clock, TrendingUp, CheckCircle, ArrowRight } from "lucide-react";
 
 const destinations = [
   {
     country: "Canada",
+    slug: "canada",
     flag: "🇨🇦",
     description: "Welcoming immigration policies",
     image: "https://images.unsplash.com/photo-1559494007-9f5847c49d94?q=80&w=2940",
@@ -23,6 +25,7 @@ const destinations = [
   },
   {
     country: "United States",
+    slug: "usa",
     flag: "🇺🇸",
     description: "Land of opportunities",
     image: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=2940",
@@ -39,6 +42,7 @@ const destinations = [
   },
   {
     country: "Australia",
+    slug: "australia",
     flag: "🇦🇺",
     description: "Quality of life",
     image: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?q=80&w=2940",
@@ -57,20 +61,20 @@ const destinations = [
 
 export default function DestinationCountries() {
   return (
-    <section className="py-20 bg-gray-50" id="destinations">
-      <div className="container mx-auto px-4">
+    <section className="py-24 bg-primary-50" id="destinations">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold mb-4 text-gray-900">
+          <h2 className="text-heading-2 text-primary-900 mb-4">
             Choose Your Destination
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            We specialize in immigration to the world's top destinations
+          <p className="text-body-lg text-primary-600 max-w-2xl mx-auto">
+            We specialize in immigration to the world's top destinations, offering tailored pathways for your unique profile.
           </p>
         </motion.div>
 
@@ -82,75 +86,76 @@ export default function DestinationCountries() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-2xl transition-all"
+              className="group relative bg-white rounded-card overflow-hidden border border-primary-100 hover:shadow-card-hover transition-all duration-300"
             >
               {/* Background Image */}
-              <div className="relative h-48 w-full overflow-hidden">
+              <div className="relative h-56 w-full overflow-hidden">
                 <Image
                   src={dest.image}
                   alt={dest.imageAlt}
                   fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-900/80 to-transparent" />
+
                 {/* Country Badge */}
-                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-2">
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md rounded-full px-4 py-2 flex items-center gap-2 shadow-sm">
                   <span className="text-2xl">{dest.flag}</span>
-                  <span className="font-semibold text-sm text-gray-900">{dest.country}</span>
+                  <span className="font-bold text-sm text-primary-900">{dest.country}</span>
                 </div>
               </div>
 
               <div className="p-6">
                 {/* Header */}
-                <div className="mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                <div className="mb-6">
+                  <h3 className="text-heading-5 text-primary-900 mb-2">
                     Immigration to {dest.country}
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-body-sm text-primary-500">
                     {dest.description}
                   </p>
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="bg-gray-50 rounded-lg p-3">
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-primary-50 rounded-xl p-3 border border-primary-100">
                     <div className="flex items-center gap-2 mb-1">
-                      <Clock className="h-4 w-4 text-gray-400" />
-                      <p className="text-xs text-gray-500">Processing</p>
+                      <Clock className="h-4 w-4 text-primary-400" />
+                      <p className="text-xs font-semibold text-primary-500 uppercase tracking-wider">Processing</p>
                     </div>
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-sm font-bold text-primary-900">
                       {dest.processingTime}
                     </p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
+                  <div className="bg-success-50 rounded-xl p-3 border border-success-100">
                     <div className="flex items-center gap-2 mb-1">
-                      <TrendingUp className="h-4 w-4 text-gray-400" />
-                      <p className="text-xs text-gray-500">Success</p>
+                      <TrendingUp className="h-4 w-4 text-success-500" />
+                      <p className="text-xs font-semibold text-success-600 uppercase tracking-wider">Success</p>
                     </div>
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-sm font-bold text-success-700">
                       {dest.successRate}
                     </p>
                   </div>
                 </div>
 
                 {/* Programs */}
-                <div className="space-y-2 mb-4">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Popular Programs</p>
+                <div className="space-y-3 mb-6">
+                  <p className="text-xs font-bold text-primary-400 uppercase tracking-wider">Popular Programs</p>
                   {dest.highlights.map((item) => (
-                    <div key={item} className="flex items-center gap-2">
-                      <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-                      <span className="text-sm text-gray-600">{item}</span>
+                    <div key={item} className="flex items-center gap-3">
+                      <CheckCircle className="h-4 w-4 text-accent-500 flex-shrink-0" />
+                      <span className="text-sm text-primary-700 font-medium">{item}</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Popular Cities */}
-                <div className="mb-4">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Popular Cities</p>
+                <div className="mb-8">
+                  <p className="text-xs font-bold text-primary-400 uppercase tracking-wider mb-3">Popular Cities</p>
                   <div className="flex flex-wrap gap-2">
                     {dest.popularCities.map((city) => (
-                      <span key={city} className="px-2 py-1 bg-gray-100 text-xs text-gray-600 rounded-full">
+                      <span key={city} className="px-3 py-1 bg-primary-50 text-xs font-medium text-primary-600 rounded-full border border-primary-100">
                         {city}
                       </span>
                     ))}
@@ -158,12 +163,12 @@ export default function DestinationCountries() {
                 </div>
 
                 {/* CTA */}
-                <button className="w-full py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-900 transition-colors group">
-                  <span className="flex items-center justify-center gap-2">
+                <Link href={`/countries/${dest.slug}`}>
+                  <button className="w-full py-3 bg-primary-900 text-white rounded-button font-semibold hover:bg-primary-800 transition-all group-hover:shadow-lg flex items-center justify-center gap-2">
                     Explore {dest.country}
-                    <span className="group-hover:translate-x-1 transition-transform">→</span>
-                  </span>
-                </button>
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </Link>
               </div>
             </motion.div>
           ))}

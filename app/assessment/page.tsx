@@ -5,8 +5,10 @@ import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, CheckCircle, AlertCircle, Globe, MapPin } from "lucide-react";
 import { api } from "@/lib/axios";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/auth-context";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 
 interface Question {
   _id: string;
@@ -45,6 +47,8 @@ const destinations = [
 export default function AssessmentPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user, loading: authLoading } = useAuth();
+
   const [currentStep, setCurrentStep] = useState(0);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [responses, setResponses] = useState<AssessmentResponse[]>([]);
@@ -118,7 +122,24 @@ export default function AssessmentPage() {
     try {
       setSubmitting(true);
       const sessionId = `session_${Date.now()}`;
-      
+
+      // If user is NOT logged in, save to localStorage
+      if (!user && !authLoading) {
+        const assessmentData = {
+          sessionId,
+          fromCountry,
+          toCountry,
+          responses,
+          timestamp: new Date().toISOString()
+        };
+        localStorage.setItem('pending_assessment', JSON.stringify(assessmentData));
+
+        toast.info("Please login to save your assessment results");
+        router.push('/login?redirect=/assessment/complete');
+        return;
+      }
+
+      // User is logged in - submit directly
       const response = await api.post("/assessment/submit", {
         sessionId,
         fromCountry,
@@ -126,21 +147,21 @@ export default function AssessmentPage() {
         responses
       });
 
-      const { data } = response;
-      toast.success("Assessment completed successfully!");
-      
-      // Navigate to results page
-      router.push(`/assessment/results?sessionId=${data.sessionId}`);
-    } catch (error) {
-      toast.error("Failed to submit assessment");
+      if (response.success) {
+        toast.success("Assessment completed successfully!");
+        // Redirect to home page to see results
+        router.push('/');
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to submit assessment");
       console.error(error);
     } finally {
       setSubmitting(false);
     }
   };
 
-  const progress = questions.length > 0 
-    ? ((currentQuestionIndex + 1) / questions.length) * 100 
+  const progress = questions.length > 0
+    ? ((currentQuestionIndex + 1) / questions.length) * 100
     : 0;
 
   const getCategoryIcon = (category: string) => {
@@ -156,11 +177,21 @@ export default function AssessmentPage() {
     return icons[category] || "📝";
   };
 
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-primary-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-900"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Background pattern */}
-      <div className="absolute inset-0 w-full h-full opacity-[0.02]">
-        <div className="absolute inset-0" 
+    <DashboardLayout>
+      <div className="min-h-screen bg-gray-50 relative">
+        {/* Background pattern */}
+        <div className="absolute inset-0 w-full h-full opacity-[0.02]">
+        <div className="absolute inset-0"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           }}
@@ -180,6 +211,11 @@ export default function AssessmentPage() {
           <p className="text-xl text-gray-600">
             Answer a few questions to check your eligibility
           </p>
+          {user && (
+            <p className="text-sm text-gray-500 mt-2">
+              Logged in as {user.firstName} {user.lastName}
+            </p>
+          )}
         </motion.div>
 
         {/* Country Selection Step */}
@@ -363,35 +399,6 @@ export default function AssessmentPage() {
                     </div>
                   </motion.div>
                 </AnimatePresence>
-
-                {/* Category Progress */}
-                <div className="mt-8 grid grid-cols-7 gap-2">
-                  {["personal", "employment", "financial", "travel", "legal", "health", "other"].map((category) => {
-                    const categoryQuestions = questions.filter(q => q.category === category);
-                    const answeredQuestions = categoryQuestions.filter((q, idx) => {
-                      const questionIdx = questions.findIndex(question => question._id === q._id);
-                      return questionIdx <= currentQuestionIndex;
-                    });
-                    const progress = categoryQuestions.length > 0 
-                      ? (answeredQuestions.length / categoryQuestions.length) * 100 
-                      : 0;
-
-                    return (
-                      <div key={category} className="text-center">
-                        <div className="text-2xl mb-2">{getCategoryIcon(category)}</div>
-                        <div className="w-full bg-gray-200 rounded-full h-1">
-                          <div 
-                            className="bg-black h-1 rounded-full"
-                            style={{ width: `${progress}%` }}
-                          />
-                        </div>
-                        <span className="text-xs text-gray-400 mt-1">
-                          {category}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
               </>
             ) : (
               <div className="text-center py-12">
@@ -401,6 +408,7 @@ export default function AssessmentPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

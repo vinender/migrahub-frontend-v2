@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Star, Quote } from "lucide-react";
+import { Star, Quote, MapPin, ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 const testimonials = [
   {
@@ -68,20 +69,29 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="py-20 bg-white" id="testimonials">
-      <div className="container mx-auto px-4">
+    <section className="py-24 bg-white relative overflow-hidden" id="testimonials">
+      {/* Decorative Background */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-1/2 left-0 w-[600px] h-[600px] bg-primary-50 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2 opacity-60" />
+        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-accent-50 rounded-full blur-3xl translate-y-1/2 translate-x-1/2 opacity-60" />
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-20"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold mb-4 text-gray-900">
+          <span className="inline-block py-1 px-3 rounded-full bg-accent-50 text-accent-600 text-sm font-bold tracking-wide uppercase mb-4 border border-accent-100">
             Success Stories
+          </span>
+          <h2 className="text-heading-2 text-primary-900 mb-4">
+            Trusted by Immigrants Worldwide
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Join thousands of happy immigrants who trusted MigraHub with their dreams
+          <p className="text-body-lg text-primary-600 max-w-3xl mx-auto">
+            Join thousands of happy immigrants who trusted MigraHub with their dreams. Real people, real success stories.
           </p>
         </motion.div>
 
@@ -89,56 +99,75 @@ export default function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="h-full"
             >
-              <div className="rounded-2xl h-full p-6 bg-white border border-gray-200 hover:shadow-lg transition-shadow">
-                <div className="relative">
-                  {/* Quote Icon */}
-                  <Quote className="absolute -top-2 -left-2 h-8 w-8 text-gray-200" />
-                  
-                  {/* Header */}
-                  <div className="flex items-start gap-4 mb-4">
-                    <img
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="w-14 h-14 rounded-full"
-                    />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">
-                        {testimonial.name}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {testimonial.role}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs">{testimonial.from}</span>
-                        <span className="text-xs">→</span>
-                        <span className="text-xs font-semibold">{testimonial.to}</span>
-                      </div>
+              <div className="rounded-card h-full p-8 bg-white border border-primary-100 hover:border-accent-200 hover:shadow-card-hover transition-all duration-300 group relative">
+                {/* Quote Icon */}
+                <div className="absolute top-8 right-8 text-primary-100 group-hover:text-accent-100 transition-colors">
+                  <Quote className="h-10 w-10 fill-current" />
+                </div>
+
+                {/* Header */}
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-md">
+                      <Image
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        width={64}
+                        height={64}
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm">
+                      <div className="bg-success-500 rounded-full w-3 h-3 border-2 border-white" />
                     </div>
                   </div>
-
-                  {/* Rating */}
-                  <div className="flex gap-1 mb-3">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    ))}
+                  <div>
+                    <h3 className="font-bold text-primary-900 text-lg leading-tight">
+                      {testimonial.name}
+                    </h3>
+                    <p className="text-sm text-primary-500 font-medium">
+                      {testimonial.role}
+                    </p>
                   </div>
+                </div>
 
-                  {/* Testimonial */}
-                  <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                    "{testimonial.testimonial}"
-                  </p>
-
-                  {/* Program Badge */}
-                  <div className="inline-flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full">
-                    <span className="text-xs font-semibold text-gray-700">
-                      {testimonial.program}
-                    </span>
+                {/* Journey Badge */}
+                <div className="flex items-center gap-2 mb-6 bg-primary-50 rounded-lg p-3 border border-primary-100">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-primary-700">
+                    <MapPin className="h-3.5 w-3.5 text-primary-400" />
+                    {testimonial.from}
                   </div>
+                  <ArrowRight className="h-3.5 w-3.5 text-primary-400" />
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-accent-600">
+                    <MapPin className="h-3.5 w-3.5 text-accent-500" />
+                    {testimonial.to}
+                  </div>
+                </div>
+
+                {/* Rating */}
+                <div className="flex gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-warning-400 text-warning-400" />
+                  ))}
+                </div>
+
+                {/* Testimonial */}
+                <p className="text-body-sm text-primary-600 leading-relaxed mb-6 italic">
+                  "{testimonial.testimonial}"
+                </p>
+
+                {/* Program Badge */}
+                <div className="inline-flex items-center gap-2 bg-primary-900 px-3 py-1.5 rounded-full mt-auto">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-pulse" />
+                  <span className="text-xs font-bold text-white tracking-wide">
+                    {testimonial.program}
+                  </span>
                 </div>
               </div>
             </motion.div>
@@ -151,19 +180,17 @@ export default function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-16 text-center"
+          className="mt-20 text-center"
         >
-          <div className="flex flex-wrap justify-center items-center gap-8">
+          <div className="inline-flex flex-wrap justify-center items-center gap-8 bg-white px-8 py-4 rounded-full shadow-sm border border-primary-100">
             <div className="flex items-center gap-2">
-              <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-              <span className="font-semibold text-gray-900">4.9/5 Rating</span>
+              <Star className="h-5 w-5 fill-warning-400 text-warning-400" />
+              <span className="font-bold text-primary-900">4.9/5 Rating</span>
             </div>
-            <div className="text-gray-400">•</div>
-            <span className="text-gray-600">50,000+ Success Stories</span>
-            <div className="text-gray-400">•</div>
-            <span className="text-gray-600">Licensed RCCIC Professionals</span>
-            <div className="text-gray-400">•</div>
-            <span className="text-gray-600">Verified Reviews</span>
+            <div className="w-1 h-1 rounded-full bg-primary-300" />
+            <span className="text-primary-600 font-medium">50,000+ Success Stories</span>
+            <div className="w-1 h-1 rounded-full bg-primary-300" />
+            <span className="text-primary-600 font-medium">Licensed Professionals</span>
           </div>
         </motion.div>
       </div>
