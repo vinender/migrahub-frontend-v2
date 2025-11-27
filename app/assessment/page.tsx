@@ -63,6 +63,7 @@ export default function AssessmentPage() {
     if (fromCountry && toCountry && currentStep === 1) {
       fetchQuestions();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromCountry, toCountry, currentStep]);
 
   const fetchQuestions = async () => {
@@ -152,8 +153,9 @@ export default function AssessmentPage() {
         // Redirect to home page to see results
         router.push('/');
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to submit assessment");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Failed to submit assessment");
       console.error(error);
     } finally {
       setSubmitting(false);
@@ -165,7 +167,7 @@ export default function AssessmentPage() {
     : 0;
 
   const getCategoryIcon = (category: string) => {
-    const icons: Record<string, any> = {
+    const icons: Record<string, string> = {
       personal: "👤",
       employment: "💼",
       financial: "💰",

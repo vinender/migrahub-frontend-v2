@@ -3,14 +3,22 @@
 import { useForm } from 'react-hook-form';
 import { Save, X, FileText } from 'lucide-react';
 
+interface PassportInfoData {
+  passportNumber: string;
+  issueDate: string;
+  expiryDate: string;
+  issuingCountry: string;
+  placeOfIssue: string;
+}
+
 interface PassportInfoFormProps {
-  data: any;
-  onSave: (data: any) => void;
+  data: PassportInfoData | null;
+  onSave: (data: PassportInfoData) => void;
   onCancel: () => void;
 }
 
 export default function PassportInfoForm({ data, onSave, onCancel }: PassportInfoFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm<PassportInfoData>({
     defaultValues: {
       passportNumber: data?.passportNumber || '',
       issueDate: data?.issueDate ? new Date(data.issueDate).toISOString().split('T')[0] : '',

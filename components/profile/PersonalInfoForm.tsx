@@ -1,14 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Save, X, User } from 'lucide-react';
-
-interface PersonalInfoFormProps {
-  data: any;
-  onSave: (data: any) => void;
-  onCancel: () => void;
-}
 
 interface PersonalInfoData {
   firstName: string;
@@ -19,6 +12,12 @@ interface PersonalInfoData {
   gender: 'male' | 'female' | 'other' | 'prefer_not_to_say';
   nationality: string;
   maritalStatus: 'single' | 'married' | 'divorced' | 'widowed' | 'separated';
+}
+
+interface PersonalInfoFormProps {
+  data: PersonalInfoData | null;
+  onSave: (data: PersonalInfoData) => void;
+  onCancel: () => void;
 }
 
 export default function PersonalInfoForm({ data, onSave, onCancel }: PersonalInfoFormProps) {

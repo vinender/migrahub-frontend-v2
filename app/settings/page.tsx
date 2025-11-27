@@ -12,7 +12,6 @@ import {
   Lock,
   Bell,
   Globe,
-  Shield,
   Eye,
   EyeOff,
   Loader2,
@@ -75,8 +74,9 @@ export default function SettingsPage() {
       }
       toast.success('Account updated successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to update account');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || 'Failed to update account');
     },
   });
 
@@ -97,8 +97,9 @@ export default function SettingsPage() {
         confirmPassword: '',
       });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to change password');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || 'Failed to change password');
     },
   });
 
@@ -111,8 +112,9 @@ export default function SettingsPage() {
     onSuccess: () => {
       toast.success('Notification settings updated');
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to update settings');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || 'Failed to update settings');
     },
   });
 
@@ -125,8 +127,9 @@ export default function SettingsPage() {
     onSuccess: () => {
       toast.success('Preferences updated successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to update preferences');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || 'Failed to update preferences');
     },
   });
 
@@ -141,8 +144,9 @@ export default function SettingsPage() {
       logout();
       router.push('/');
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to delete account');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || 'Failed to delete account');
     },
   });
 

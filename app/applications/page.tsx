@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/axios';
@@ -43,7 +42,6 @@ interface Application {
 }
 
 export default function ApplicationsPage() {
-  const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');

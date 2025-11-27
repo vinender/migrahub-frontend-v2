@@ -3,12 +3,11 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { 
-  CheckCircle, 
-  AlertCircle, 
-  TrendingUp, 
+import {
+  CheckCircle,
+  AlertCircle,
+  TrendingUp,
   Award,
-  FileText,
   ArrowRight,
   Download,
   Share2
@@ -42,6 +41,7 @@ export default function ResultsPage() {
     } else {
       router.push("/assessment");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
 
   const fetchResults = async () => {

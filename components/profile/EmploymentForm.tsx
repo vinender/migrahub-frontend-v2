@@ -3,14 +3,24 @@
 import { useState } from 'react';
 import { Save, X, Briefcase, Plus, Trash2 } from 'lucide-react';
 
+interface EmploymentEntry {
+  employer: string;
+  position: string;
+  startDate: string;
+  endDate: string;
+  isCurrentlyEmployed: boolean;
+  responsibilities: string;
+  country: string;
+}
+
 interface EmploymentFormProps {
-  data: any[];
-  onSave: (data: any[]) => void;
+  data: EmploymentEntry[];
+  onSave: (data: EmploymentEntry[]) => void;
   onCancel: () => void;
 }
 
 export default function EmploymentForm({ data, onSave, onCancel }: EmploymentFormProps) {
-  const [employmentList, setEmploymentList] = useState(data || []);
+  const [employmentList, setEmploymentList] = useState<EmploymentEntry[]>(data || []);
 
   const addEmployment = () => {
     setEmploymentList([...employmentList, {
@@ -28,7 +38,7 @@ export default function EmploymentForm({ data, onSave, onCancel }: EmploymentFor
     setEmploymentList(employmentList.filter((_, i) => i !== index));
   };
 
-  const updateEmployment = (index: number, field: string, value: any) => {
+  const updateEmployment = (index: number, field: string, value: string | boolean) => {
     const updated = [...employmentList];
     updated[index] = { ...updated[index], [field]: value };
     setEmploymentList(updated);

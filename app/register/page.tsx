@@ -52,8 +52,9 @@ export default function RegisterPage() {
       toast.success('Account Created!', {
         description: 'Welcome to MigraHub. Your journey begins now.',
       });
-    } catch (error) {
-      const errorMessage = (error as any)?.response?.data?.message || (error as Error)?.message || 'Registration failed. Please try again.';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
+      const errorMessage = err?.response?.data?.message || err?.message || 'Registration failed. Please try again.';
       setApiError(errorMessage);
       toast.error('Registration Failed', {
         description: errorMessage,

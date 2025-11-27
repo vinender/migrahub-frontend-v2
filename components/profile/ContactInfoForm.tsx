@@ -1,16 +1,33 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { Save, X, Mail, Phone, MapPin } from 'lucide-react';
+import { Save, X, Mail, MapPin } from 'lucide-react';
+
+interface Address {
+  street: string;
+  city: string;
+  state: string;
+  country: string;
+  postalCode: string;
+}
+
+interface ContactInfoData {
+  email: string;
+  phone: string;
+  alternatePhone: string;
+  currentAddress: Address;
+  sameAsCurrentAddress: boolean;
+  permanentAddress: Address;
+}
 
 interface ContactInfoFormProps {
-  data: any;
-  onSave: (data: any) => void;
+  data: ContactInfoData | null;
+  onSave: (data: ContactInfoData) => void;
   onCancel: () => void;
 }
 
 export default function ContactInfoForm({ data, onSave, onCancel }: ContactInfoFormProps) {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<ContactInfoData>({
     defaultValues: {
       email: data?.email || '',
       phone: data?.phone || '',
@@ -35,7 +52,7 @@ export default function ContactInfoForm({ data, onSave, onCancel }: ContactInfoF
 
   const sameAsCurrentAddress = watch('sameAsCurrentAddress');
 
-  const onSubmit = (formData: any) => {
+  const onSubmit = (formData: ContactInfoData) => {
     if (formData.sameAsCurrentAddress) {
       formData.permanentAddress = { ...formData.currentAddress };
     }

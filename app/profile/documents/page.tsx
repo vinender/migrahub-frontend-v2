@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/axios';
 import { toast } from 'sonner';
 import {
   FileText,
-  Upload,
   Download,
   Trash2,
   Loader2,
@@ -74,8 +72,9 @@ export default function DocumentsPage() {
       queryClient.invalidateQueries({ queryKey: ['profile-completion'] });
       toast.success('Document deleted successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to delete document');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || 'Failed to delete document');
     },
   });
 

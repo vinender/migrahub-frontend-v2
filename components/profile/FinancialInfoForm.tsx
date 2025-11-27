@@ -3,14 +3,21 @@
 import { useForm } from 'react-hook-form';
 import { Save, X, DollarSign } from 'lucide-react';
 
+interface FinancialInfoData {
+  annualIncome: string;
+  currency: string;
+  employmentStatus: string;
+  fundSource: string;
+}
+
 interface FinancialInfoFormProps {
-  data: any;
-  onSave: (data: any) => void;
+  data: FinancialInfoData | null;
+  onSave: (data: FinancialInfoData) => void;
   onCancel: () => void;
 }
 
 export default function FinancialInfoForm({ data, onSave, onCancel }: FinancialInfoFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm<FinancialInfoData>({
     defaultValues: {
       annualIncome: data?.annualIncome || '',
       currency: data?.currency || 'USD',

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/axios';
@@ -81,8 +80,9 @@ export default function ProfilePage() {
       toast.success('Profile updated successfully');
       setActiveSection('view');
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to update profile');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || 'Failed to update profile');
     },
   });
 

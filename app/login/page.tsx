@@ -37,8 +37,9 @@ export default function LoginPage() {
       toast.success('Welcome back!', {
         description: 'You have successfully logged in.',
       });
-    } catch (error) {
-      const errorMessage = (error as any)?.response?.data?.message || (error as Error)?.message || 'Login failed. Please try again.';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
+      const errorMessage = err?.response?.data?.message || err?.message || 'Login failed. Please try again.';
       setApiError(errorMessage);
       toast.error('Login Failed', {
         description: errorMessage,

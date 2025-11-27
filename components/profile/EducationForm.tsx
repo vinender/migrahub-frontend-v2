@@ -1,17 +1,26 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { Save, X, GraduationCap, Plus, Trash2 } from 'lucide-react';
 
+interface EducationEntry {
+  institution: string;
+  degree: string;
+  fieldOfStudy: string;
+  startDate: string;
+  endDate: string;
+  isCurrentlyEnrolled: boolean;
+  country: string;
+}
+
 interface EducationFormProps {
-  data: any[];
-  onSave: (data: any[]) => void;
+  data: EducationEntry[];
+  onSave: (data: EducationEntry[]) => void;
   onCancel: () => void;
 }
 
 export default function EducationForm({ data, onSave, onCancel }: EducationFormProps) {
-  const [educationList, setEducationList] = useState(data || []);
+  const [educationList, setEducationList] = useState<EducationEntry[]>(data || []);
 
   const addEducation = () => {
     setEducationList([...educationList, {
@@ -29,7 +38,7 @@ export default function EducationForm({ data, onSave, onCancel }: EducationFormP
     setEducationList(educationList.filter((_, i) => i !== index));
   };
 
-  const updateEducation = (index: number, field: string, value: any) => {
+  const updateEducation = (index: number, field: string, value: string | boolean) => {
     const updated = [...educationList];
     updated[index] = { ...updated[index], [field]: value };
     setEducationList(updated);

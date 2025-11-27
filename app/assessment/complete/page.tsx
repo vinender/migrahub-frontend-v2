@@ -12,6 +12,7 @@ export default function CompleteAssessmentPage() {
 
   useEffect(() => {
     completeAssessment();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const completeAssessment = async () => {
@@ -58,9 +59,10 @@ export default function CompleteAssessmentPage() {
         // Redirect to dashboard
         router.push('/');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error completing assessment:', error);
-      const message = error.response?.data?.message || 'Failed to save assessment';
+      const err = error as { response?: { data?: { message?: string } } };
+      const message = err.response?.data?.message || 'Failed to save assessment';
       toast.error(message);
 
       // Redirect to dashboard anyway

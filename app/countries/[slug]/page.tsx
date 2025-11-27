@@ -31,7 +31,9 @@ import { countriesData } from "@/data/countries";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 
-const iconMap: Record<string, any> = {
+import { LucideIcon } from "lucide-react";
+
+const iconMap: Record<string, LucideIcon> = {
   GraduationCap,
   Heart,
   TrendingUp,

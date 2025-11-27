@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/axios';
@@ -81,8 +80,9 @@ export default function FamilyMembersPage() {
       toast.success(editingMember ? 'Family member updated successfully' : 'Family member added successfully');
       resetForm();
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to save family member');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || 'Failed to save family member');
     },
   });
 
@@ -98,8 +98,9 @@ export default function FamilyMembersPage() {
       queryClient.invalidateQueries({ queryKey: ['profile-completion'] });
       toast.success('Family member deleted successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to delete family member');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || 'Failed to delete family member');
     },
   });
 
