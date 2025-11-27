@@ -39,9 +39,13 @@ export default function CompleteAssessmentPage() {
       const assessmentData = JSON.parse(pendingAssessment);
 
       // Check if assessment exists for this user
-      const existingAssessment = await api.get('/assessment/my-assessment');
+      interface AssessmentResponse {
+        data?: { _id?: string };
+        _id?: string;
+      }
+      const existingAssessment = await api.get<AssessmentResponse>('/assessment/my-assessment');
 
-      if (existingAssessment.data && existingAssessment.data._id) {
+      if ((existingAssessment?.data && existingAssessment.data._id) || existingAssessment?._id) {
         // User already has an assessment
         toast.info("You already have a completed assessment");
         localStorage.removeItem('pending_assessment');
@@ -50,9 +54,9 @@ export default function CompleteAssessmentPage() {
       }
 
       // Submit the assessment
-      const response = await api.post("/assessment/submit", assessmentData);
+      const response = await api.post<{ success?: boolean }>("/assessment/submit", assessmentData);
 
-      if (response.success) {
+      if (response?.success) {
         toast.success("Assessment saved successfully!");
         localStorage.removeItem('pending_assessment');
 

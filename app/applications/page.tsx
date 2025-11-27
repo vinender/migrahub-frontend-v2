@@ -50,8 +50,8 @@ export default function ApplicationsPage() {
   const { data: applications = [], isLoading } = useQuery<Application[]>({
     queryKey: ['applications'],
     queryFn: async () => {
-      const response = await api.get('/applications');
-      return response.data || [];
+      const response = await api.get<{ data: Application[] } | Application[]>('/applications');
+      return Array.isArray(response) ? response : (response?.data || []);
     },
     enabled: !!user,
   });

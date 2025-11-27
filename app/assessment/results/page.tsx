@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -10,7 +10,8 @@ import {
   Award,
   ArrowRight,
   Download,
-  Share2
+  Share2,
+  Loader2
 } from "lucide-react";
 import { api } from "@/lib/axios";
 import { toast } from "sonner";
@@ -28,7 +29,11 @@ interface AssessmentResult {
   completedAt: string;
 }
 
-export default function ResultsPage() {
+interface ResultsApiResponse {
+  data?: AssessmentResult;
+}
+
+function ResultsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("sessionId");
@@ -47,8 +52,9 @@ export default function ResultsPage() {
   const fetchResults = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/assessment/results/${sessionId}`);
-      setResult(response.data);
+      const response = await api.get<ResultsApiResponse | AssessmentResult>(`/assessment/results/${sessionId}`);
+      const resultData = (response as ResultsApiResponse)?.data || (response as AssessmentResult);
+      setResult(resultData);
     } catch (error) {
       toast.error("Failed to fetch assessment results");
       console.error(error);
@@ -121,7 +127,7 @@ export default function ResultsPage() {
             Your Assessment Results
           </h1>
           <p className="text-xl text-gray-600">
-            Based on your responses, here's your immigration eligibility assessment
+            Based on your responses, here&apos;s your immigration eligibility assessment
           </p>
         </motion.div>
 
@@ -307,7 +313,7 @@ export default function ResultsPage() {
             <p className="text-yellow-700 text-sm flex items-start gap-2">
               <AlertCircle className="h-4 w-4 mt-0.5" />
               <span>
-                This assessment is for informational purposes only and does not constitute legal advice. 
+                This assessment is for informational purposes only and does not constitute legal advice.
                 Please consult with our immigration experts for a comprehensive evaluation of your case.
               </span>
             </p>
@@ -315,5 +321,24 @@ export default function ResultsPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+function ResultsLoadingFallback() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center">
+        <Loader2 className="h-12 w-12 animate-spin text-gray-900 mx-auto mb-4" />
+        <p className="text-gray-600">Loading results...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense fallback={<ResultsLoadingFallback />}>
+      <ResultsPageContent />
+    </Suspense>
   );
 }

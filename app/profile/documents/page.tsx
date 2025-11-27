@@ -45,7 +45,6 @@ const documentTypes = [
 ];
 
 export default function DocumentsPage() {
-  const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [selectedType, setSelectedType] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -55,8 +54,8 @@ export default function DocumentsPage() {
   const { data: documents = [], isLoading } = useQuery<Document[]>({
     queryKey: ['documents'],
     queryFn: async () => {
-      const response = await api.get('/profile/documents');
-      return response.data || [];
+      const response = await api.get<{ data?: Document[] } | Document[]>('/profile/documents');
+      return (response as { data?: Document[] })?.data || (response as Document[]) || [];
     },
     enabled: !!user,
   });
@@ -64,8 +63,8 @@ export default function DocumentsPage() {
   // Delete document mutation
   const deleteDocumentMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await api.delete(`/profile/documents/${id}`);
-      return response.data;
+      const response = await api.delete<{ data?: unknown }>(`/profile/documents/${id}`);
+      return response?.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documents'] });
@@ -104,13 +103,13 @@ export default function DocumentsPage() {
       formData.append('file', file);
       formData.append('documentType', selectedType);
 
-      const response = await api.post('/profile/documents', formData, {
+      const response = await api.post<{ success?: boolean }>('/profile/documents', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      if (response.success) {
+      if (response?.success) {
         queryClient.invalidateQueries({ queryKey: ['documents'] });
         queryClient.invalidateQueries({ queryKey: ['profile-completion'] });
         toast.success('Document uploaded successfully');
@@ -118,8 +117,9 @@ export default function DocumentsPage() {
         // Reset file input
         e.target.value = '';
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to upload document');
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || 'Failed to upload document');
     } finally {
       setUploading(false);
     }

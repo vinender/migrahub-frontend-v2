@@ -54,6 +54,14 @@ interface ProfileCompletion {
   isProfileComplete: boolean;
 }
 
+interface AssessmentApiResponse {
+  data?: Assessment;
+}
+
+interface ProfileCompletionApiResponse {
+  data?: ProfileCompletion;
+}
+
 // Dashboard Component
 function DashboardContent() {
   const { user } = useAuth();
@@ -62,8 +70,8 @@ function DashboardContent() {
   const { data: assessment, isLoading: assessmentLoading } = useQuery<Assessment>({
     queryKey: ['assessment'],
     queryFn: async () => {
-      const response = await api.get('/assessment/my-assessment');
-      return response.data;
+      const response = await api.get<AssessmentApiResponse | Assessment>('/assessment/my-assessment');
+      return (response as AssessmentApiResponse)?.data || (response as Assessment);
     },
     enabled: !!user,
   });
@@ -72,8 +80,8 @@ function DashboardContent() {
   const { data: profileCompletion, isLoading: profileLoading } = useQuery<ProfileCompletion>({
     queryKey: ['profile-completion'],
     queryFn: async () => {
-      const response = await api.get('/profile/completion');
-      return response.data;
+      const response = await api.get<ProfileCompletionApiResponse | ProfileCompletion>('/profile/completion');
+      return (response as ProfileCompletionApiResponse)?.data || (response as ProfileCompletion);
     },
     enabled: !!user,
   });

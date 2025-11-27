@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, CheckCircle, AlertCircle, Globe, MapPin } from "lucide-react";
+import { ChevronRight, ChevronLeft, CheckCircle, AlertCircle, Globe, MapPin, Loader2 } from "lucide-react";
 import { api } from "@/lib/axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -27,6 +27,13 @@ interface AssessmentResponse {
   weight: number;
 }
 
+interface QuestionsApiResponse {
+  data?: {
+    questions: Question[];
+  };
+  questions?: Question[];
+}
+
 const countries = [
   { code: "IN", name: "India", flag: "🇮🇳" },
   { code: "CN", name: "China", flag: "🇨🇳" },
@@ -44,7 +51,7 @@ const destinations = [
   { code: "AU", name: "Australia", flag: "🇦🇺" },
 ];
 
-export default function AssessmentPage() {
+function AssessmentPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
@@ -69,12 +76,13 @@ export default function AssessmentPage() {
   const fetchQuestions = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/assessment/questions", {
+      const response = await api.get<QuestionsApiResponse>("/assessment/questions", {
         params: { fromCountry, toCountry }
       });
-      setQuestions(response.data.questions);
+      const questionsData = response?.data?.questions || response?.questions || [];
+      setQuestions(questionsData);
       setResponses(
-        response.data.questions.map((q: Question) => ({
+        questionsData.map((q: Question) => ({
           questionId: q._id,
           question: q.question,
           answer: false,
@@ -141,14 +149,14 @@ export default function AssessmentPage() {
       }
 
       // User is logged in - submit directly
-      const response = await api.post("/assessment/submit", {
+      const response = await api.post<{ success?: boolean }>("/assessment/submit", {
         sessionId,
         fromCountry,
         toCountry,
         responses
       });
 
-      if (response.success) {
+      if (response?.success) {
         toast.success("Assessment completed successfully!");
         // Redirect to home page to see results
         router.push('/');
@@ -412,5 +420,26 @@ export default function AssessmentPage() {
       </div>
       </div>
     </DashboardLayout>
+  );
+}
+
+function AssessmentLoadingFallback() {
+  return (
+    <DashboardLayout>
+      <div className="min-h-screen flex items-center justify-center bg-primary-50">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-primary-900 mx-auto mb-4" />
+          <p className="text-primary-600">Loading assessment...</p>
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+}
+
+export default function AssessmentPage() {
+  return (
+    <Suspense fallback={<AssessmentLoadingFallback />}>
+      <AssessmentPageContent />
+    </Suspense>
   );
 }

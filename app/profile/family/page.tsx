@@ -16,8 +16,7 @@ import {
   Mail,
   Phone,
   Calendar,
-  MapPin,
-  CheckCircle2
+  MapPin
 } from 'lucide-react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
@@ -35,7 +34,6 @@ interface FamilyMember {
 }
 
 export default function FamilyMembersPage() {
-  const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null);
@@ -56,8 +54,8 @@ export default function FamilyMembersPage() {
   const { data: familyMembers = [], isLoading } = useQuery<FamilyMember[]>({
     queryKey: ['family-members'],
     queryFn: async () => {
-      const response = await api.get('/profile/family-members');
-      return response.data || [];
+      const response = await api.get<{ data?: FamilyMember[] } | FamilyMember[]>('/profile/family-members');
+      return (response as { data?: FamilyMember[] })?.data || (response as FamilyMember[]) || [];
     },
     enabled: !!user,
   });
@@ -66,11 +64,11 @@ export default function FamilyMembersPage() {
   const saveMemberMutation = useMutation({
     mutationFn: async (data: FamilyMember) => {
       if (data._id) {
-        const response = await api.put(`/profile/family-members/${data._id}`, data);
-        return response.data;
+        const response = await api.put<{ data?: FamilyMember }>(`/profile/family-members/${data._id}`, data);
+        return response?.data;
       } else {
-        const response = await api.post('/profile/family-members', data);
-        return response.data;
+        const response = await api.post<{ data?: FamilyMember }>('/profile/family-members', data);
+        return response?.data;
       }
     },
     onSuccess: () => {
@@ -89,8 +87,8 @@ export default function FamilyMembersPage() {
   // Delete family member mutation
   const deleteMemberMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await api.delete(`/profile/family-members/${id}`);
-      return response.data;
+      const response = await api.delete<{ data?: unknown }>(`/profile/family-members/${id}`);
+      return response?.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['family-members'] });

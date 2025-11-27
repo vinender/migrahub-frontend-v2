@@ -50,15 +50,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAuth = async () => {
     try {
       const token = localStorage.getItem('access_token');
-      
+
       if (!token) {
         setLoading(false);
         return;
       }
 
-      const response = await api.get('/auth/me');
-      
-      if (response.success && response.data) {
+      const response = await api.get<{ success?: boolean; data?: User }>('/auth/me');
+
+      if (response?.success && response?.data) {
         setUser(response.data);
       }
     } catch (error) {
@@ -66,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       localStorage.removeItem('user');
+      console.error('Auth check failed:', error);
     } finally {
       setLoading(false);
     }
@@ -73,9 +74,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string, redirectUrl?: string) => {
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await api.post<{ success?: boolean; data?: { user: User; accessToken: string; refreshToken: string } }>('/auth/login', { email, password });
 
-      if (response.success) {
+      if (response?.success && response?.data) {
         const { user, accessToken, refreshToken } = response.data;
 
         // Store tokens
@@ -98,8 +99,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Redirect to home page (dashboard will be shown there)
         router.push('/');
       }
-    } catch (error: any) {
-      const message = error.response?.data?.message || 'Login failed';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      const message = err.response?.data?.message || 'Login failed';
       toast.error(message);
       throw error;
     }
@@ -107,24 +109,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (data: RegisterData) => {
     try {
-      const response = await api.post('/auth/register', data);
-      
-      if (response.success) {
+      const response = await api.post<{ success?: boolean; data?: { user: User; accessToken: string; refreshToken: string } }>('/auth/register', data);
+
+      if (response?.success && response?.data) {
         const { user, accessToken, refreshToken } = response.data;
-        
+
         // Store tokens
         localStorage.setItem('access_token', accessToken);
         localStorage.setItem('refresh_token', refreshToken);
         localStorage.setItem('user', JSON.stringify(user));
-        
+
         setUser(user);
         toast.success('Registration successful!');
 
         // Redirect to home page (dashboard will be shown there)
         router.push('/');
       }
-    } catch (error: any) {
-      const message = error.response?.data?.message || 'Registration failed';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      const message = err.response?.data?.message || 'Registration failed';
       toast.error(message);
       throw error;
     }

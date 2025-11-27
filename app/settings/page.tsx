@@ -65,12 +65,13 @@ export default function SettingsPage() {
   // Update account mutation
   const updateAccountMutation = useMutation({
     mutationFn: async (data: typeof accountData) => {
-      const response = await api.put('/auth/update-profile', data);
-      return response.data;
+      const response = await api.put<{ data?: { user?: Parameters<typeof updateUser>[0] }; user?: Parameters<typeof updateUser>[0] }>('/auth/update-profile', data);
+      return response?.data || response;
     },
     onSuccess: (data) => {
-      if (data.user) {
-        updateUser(data.user);
+      const result = data as { user?: Parameters<typeof updateUser>[0] };
+      if (result?.user) {
+        updateUser(result.user);
       }
       toast.success('Account updated successfully');
     },
@@ -83,11 +84,11 @@ export default function SettingsPage() {
   // Change password mutation
   const changePasswordMutation = useMutation({
     mutationFn: async (data: typeof passwordData) => {
-      const response = await api.put('/auth/change-password', {
+      const response = await api.put<{ data?: unknown }>('/auth/change-password', {
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       });
-      return response.data;
+      return response?.data || response;
     },
     onSuccess: () => {
       toast.success('Password changed successfully');
@@ -106,8 +107,8 @@ export default function SettingsPage() {
   // Update notifications mutation
   const updateNotificationsMutation = useMutation({
     mutationFn: async (data: typeof notificationSettings) => {
-      const response = await api.put('/settings/notifications', data);
-      return response.data;
+      const response = await api.put<{ data?: unknown }>('/settings/notifications', data);
+      return response?.data || response;
     },
     onSuccess: () => {
       toast.success('Notification settings updated');
@@ -121,8 +122,8 @@ export default function SettingsPage() {
   // Update preferences mutation
   const updatePreferencesMutation = useMutation({
     mutationFn: async (data: typeof preferences) => {
-      const response = await api.put('/settings/preferences', data);
-      return response.data;
+      const response = await api.put<{ data?: unknown }>('/settings/preferences', data);
+      return response?.data || response;
     },
     onSuccess: () => {
       toast.success('Preferences updated successfully');
@@ -136,8 +137,8 @@ export default function SettingsPage() {
   // Delete account mutation
   const deleteAccountMutation = useMutation({
     mutationFn: async () => {
-      const response = await api.delete('/auth/account');
-      return response.data;
+      const response = await api.delete<{ data?: unknown }>('/auth/account');
+      return response?.data || response;
     },
     onSuccess: () => {
       toast.success('Account deleted successfully');

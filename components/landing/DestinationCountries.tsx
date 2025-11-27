@@ -74,7 +74,7 @@ export default function DestinationCountries() {
             Choose Your Destination
           </h2>
           <p className="text-body-base sm:text-body-lg text-primary-600 max-w-2xl mx-auto px-2">
-            We specialize in immigration to the world's top destinations, offering tailored pathways for your unique profile.
+            We specialize in immigration to the world&apos;s top destinations, offering tailored pathways for your unique profile.
           </p>
         </motion.div>
 

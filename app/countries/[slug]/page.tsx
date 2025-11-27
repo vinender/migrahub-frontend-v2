@@ -58,7 +58,7 @@ export default function CountryDetailPage() {
       <div className="min-h-screen flex items-center justify-center bg-primary-50">
         <div className="text-center p-8">
           <h1 className="text-heading-3 text-primary-900 mb-4">Country Not Found</h1>
-          <p className="text-body-base text-primary-600 mb-6">The country you're looking for doesn't exist in our system.</p>
+          <p className="text-body-base text-primary-600 mb-6">The country you&apos;re looking for doesn&apos;t exist in our system.</p>
           <Link href="/" className="btn-primary inline-flex items-center gap-2">
             <ArrowLeft className="h-5 w-5" />
             Return to Home

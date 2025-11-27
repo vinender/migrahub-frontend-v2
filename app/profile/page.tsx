@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/axios';
@@ -8,7 +9,6 @@ import { toast } from 'sonner';
 import {
   User,
   Mail,
-  Phone,
   MapPin,
   Briefcase,
   GraduationCap,
@@ -28,15 +28,76 @@ import EducationForm from '@/components/profile/EducationForm';
 import EmploymentForm from '@/components/profile/EmploymentForm';
 import FinancialInfoForm from '@/components/profile/FinancialInfoForm';
 
+interface PersonalInfo {
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
+  nationality?: string;
+  gender?: string;
+  maritalStatus?: string;
+}
+
+interface ContactInfo {
+  email?: string;
+  phone?: string;
+  currentAddress?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    postalCode?: string;
+  };
+}
+
+interface PassportInfo {
+  passportNumber?: string;
+  issueDate?: string;
+  expiryDate?: string;
+  issuingCountry?: string;
+}
+
+interface EducationEntry {
+  institution: string;
+  degree: string;
+  fieldOfStudy: string;
+  startDate: string;
+  endDate: string;
+  isCurrentlyEnrolled: boolean;
+  country: string;
+}
+
+interface EmploymentEntry {
+  employer: string;
+  position: string;
+  startDate: string;
+  endDate: string;
+  isCurrentlyEmployed: boolean;
+  responsibilities: string;
+  country: string;
+}
+
+interface FinancialInfo {
+  annualIncome?: string;
+  currency?: string;
+  employmentStatus?: string;
+}
+
+interface FamilyMember {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  relationship: string;
+}
+
 interface ApplicantProfile {
   _id: string;
-  personalInfo: any;
-  contactInfo: any;
-  passportInfo: any;
-  education: any[];
-  employment: any[];
-  financialInfo: any;
-  familyMembers: any[];
+  personalInfo: PersonalInfo | null;
+  contactInfo: ContactInfo | null;
+  passportInfo: PassportInfo | null;
+  education: EducationEntry[];
+  employment: EmploymentEntry[];
+  financialInfo: FinancialInfo | null;
+  familyMembers: FamilyMember[];
   completionStatus: {
     personalInfo: boolean;
     contactInfo: boolean;
@@ -62,17 +123,17 @@ export default function ProfilePage() {
   const { data: profile, isLoading } = useQuery<ApplicantProfile>({
     queryKey: ['profile'],
     queryFn: async () => {
-      const response = await api.get('/profile');
-      return response.data;
+      const response = await api.get<{ data?: ApplicantProfile } | ApplicantProfile>('/profile');
+      return (response as { data?: ApplicantProfile })?.data || (response as ApplicantProfile);
     },
     enabled: !!user,
   });
 
   // Update profile mutation
   const updateProfileMutation = useMutation({
-    mutationFn: async ({ section, data }: { section: string; data: any }) => {
-      const response = await api.put('/profile', { section, data });
-      return response.data;
+    mutationFn: async ({ section, data }: { section: string; data: Record<string, unknown> }) => {
+      const response = await api.put<{ data?: ApplicantProfile }>('/profile', { section, data });
+      return response?.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
@@ -100,8 +161,9 @@ export default function ProfilePage() {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSaveSection = (section: string, data: any) => {
-    updateProfileMutation.mutate({ section, data });
+    updateProfileMutation.mutate({ section, data: data as Record<string, unknown> });
   };
 
   // Render section content
@@ -112,7 +174,7 @@ export default function ProfilePage() {
       case 'personalInfo':
         return (
           <PersonalInfoForm
-            data={profile.personalInfo}
+            data={profile.personalInfo as Parameters<typeof PersonalInfoForm>[0]['data']}
             onSave={(data) => handleSaveSection('personalInfo', data)}
             onCancel={() => setActiveSection('view')}
           />
@@ -120,7 +182,7 @@ export default function ProfilePage() {
       case 'contactInfo':
         return (
           <ContactInfoForm
-            data={profile.contactInfo}
+            data={profile.contactInfo as Parameters<typeof ContactInfoForm>[0]['data']}
             onSave={(data) => handleSaveSection('contactInfo', data)}
             onCancel={() => setActiveSection('view')}
           />
@@ -128,7 +190,7 @@ export default function ProfilePage() {
       case 'passportInfo':
         return (
           <PassportInfoForm
-            data={profile.passportInfo}
+            data={profile.passportInfo as Parameters<typeof PassportInfoForm>[0]['data']}
             onSave={(data) => handleSaveSection('passportInfo', data)}
             onCancel={() => setActiveSection('view')}
           />
@@ -136,7 +198,7 @@ export default function ProfilePage() {
       case 'education':
         return (
           <EducationForm
-            data={profile.education}
+            data={profile.education as Parameters<typeof EducationForm>[0]['data']}
             onSave={(data) => handleSaveSection('education', data)}
             onCancel={() => setActiveSection('view')}
           />
@@ -144,7 +206,7 @@ export default function ProfilePage() {
       case 'employment':
         return (
           <EmploymentForm
-            data={profile.employment}
+            data={profile.employment as Parameters<typeof EmploymentForm>[0]['data']}
             onSave={(data) => handleSaveSection('employment', data)}
             onCancel={() => setActiveSection('view')}
           />
@@ -152,7 +214,7 @@ export default function ProfilePage() {
       case 'financialInfo':
         return (
           <FinancialInfoForm
-            data={profile.financialInfo}
+            data={profile.financialInfo as Parameters<typeof FinancialInfoForm>[0]['data']}
             onSave={(data) => handleSaveSection('financialInfo', data)}
             onCancel={() => setActiveSection('view')}
           />
@@ -190,7 +252,7 @@ export default function ProfilePage() {
 
           {profile.familyMembers && profile.familyMembers.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {profile.familyMembers.map((member: any) => (
+              {profile.familyMembers.map((member) => (
                 <Link
                   key={member._id}
                   href={`/profile/family/${member._id}`}
@@ -285,7 +347,7 @@ export default function ProfilePage() {
         >
           {profile.education && profile.education.length > 0 ? (
             <div className="space-y-4">
-              {profile.education.map((edu: any, index: number) => (
+              {profile.education.map((edu: EducationEntry, index: number) => (
                 <div key={index} className="p-4 bg-primary-50 rounded-card">
                   <h4 className="text-body-base font-medium text-primary-900">{edu.degree}</h4>
                   <p className="text-body-sm text-primary-600">{edu.institution}</p>
@@ -309,7 +371,7 @@ export default function ProfilePage() {
         >
           {profile.employment && profile.employment.length > 0 ? (
             <div className="space-y-4">
-              {profile.employment.map((emp: any, index: number) => (
+              {profile.employment.map((emp: EmploymentEntry, index: number) => (
                 <div key={index} className="p-4 bg-primary-50 rounded-card">
                   <h4 className="text-body-base font-medium text-primary-900">{emp.position}</h4>
                   <p className="text-body-sm text-primary-600">{emp.employer}</p>
@@ -393,6 +455,9 @@ function ProfileSection({ title, icon, onEdit, isComplete, children }: ProfileSe
         <h2 className="text-heading-5 text-primary-900 flex items-center gap-2">
           {icon}
           {title}
+          {isComplete && (
+            <span className="w-2 h-2 rounded-full bg-success-500" title="Complete" />
+          )}
         </h2>
         <button
           onClick={onEdit}
